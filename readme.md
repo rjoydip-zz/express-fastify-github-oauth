@@ -38,7 +38,7 @@ Server will start on [localhost:3000](http://localhost:3000)
 
 ## Environment
 
-Include right `env` file when you running different environment.
+Import right `env` file when application running multiple environment.
 
 ```js
 config = dotenv.config({
