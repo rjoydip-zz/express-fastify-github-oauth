@@ -1,42 +1,67 @@
 "use strict";
 
-const fastifyEnv = require('fastify-env');
-const fastify = require('fastify');
-const request = require('superagent');
-const config = require('dotenv').config().parsed;
+const path = require("path");
+const fastify = require("fastify");
+const express = require("express");
+const request = require("superagent");
+const dotenv = require("dotenv");
+const isDev = process.env.NODE_ENV !== "production";
 
-const isDev = process.env.NODE_ENV !== 'production';
+let config = null;
 
-const app = fastify({
-    logger: isDev
-});
+config = dotenv.config({
+    path: path.resolve(process.cwd(), '.env')
+}).parsed;
 
-app.get('/github/callback', async (req, reply) => {
+if (isDev) {
+    config = Object.assign(config, dotenv.config({
+        path: path.resolve(process.cwd(), '.env.development')
+    }).parsed);
+} else {
+    config = Object.assign(config, dotenv.config({
+        path: path.resolve(process.cwd(), '.env.production')
+    }).parsed);
+}
+
+console.log('config', config);
+
+const isExpress = process.env.PROJECT_TYPE === "express";
+
+const app = isExpress ?
+    express() :
+    fastify({
+        logger: isDev
+    });
+
+app.get("/github/callback", async (req, res) => {
     const {
         err,
         body
-    } = await request.post('https://github.com/login/oauth/access_token')
+    } = await request
+        .post("https://github.com/login/oauth/access_token")
         .send({
             ...req.query,
-            client_id: app.env.GITHUB_CLIENT_ID,
-            client_secret: app.env.GITHUB_CLIENT_SECRET
+            client_id: process.env.GITHUB_CLIENT_ID,
+            client_secret: process.env.GITHUB_CLIENT_SECRET
         })
-        .set('Accept', 'application/json');
-    return {
+        .set("Accept", "application/json");
+    return await res.type("application/json").send({
         err,
         body
-    };
+    });
 });
 
-app.get('/', async (request, reply) => {
-    await reply.type('text/html').send(
+app.get("/", async (req, res) => {
+    return await res.type("text/html").send(
         `
         <html>
             <head>
                 <title>Github signin</title>
             </head>
             <body>
-                <a href="https://github.com/login/oauth/authorize?client_id=${app.env.GITHUB_CLIENT_ID}&scope=repo" alt="signin with github">Signin with github</a>
+                <a href="https://github.com/login/oauth/authorize?client_id=${
+                process.env.GITHUB_CLIENT_ID
+                }&scope=repo" alt="signin with github">Signin with github</a>
             </body>
         </html>
         `
@@ -44,14 +69,14 @@ app.get('/', async (request, reply) => {
 });
 
 (async () => {
-    await app.register(fastifyEnv, {
-        confKey: 'env',
-        schema: {
-            type: 'object',
-            properties: require('./properties'),
-        },
-        data: config,
-    });
-    await app.ready();
-    await app.listen(app.env.PORT);
+    if (isExpress) {
+        app.listen(process.env.PORT, () => {
+            if (isDev) {
+                console.log(`Express server is running on port: ${process.env.PORT}`);
+            }
+        });
+    } else {
+        await app.ready();
+        await app.listen(process.env.PORT);
+    }
 })();

@@ -1,13 +1,13 @@
 
-# github-oauth
+# express-fastify-github-oauth
 
-A starter github-oauth using fastify.
+A starter github-oauth using fastify and express.
 
 ## Installation
 
 ```
-$ git clone https://github.com/rjoydip/github-oauth.git
-$ cd github-oauth
+$ git clone https://github.com/rjoydip/express-fastify-github-oauth.git
+$ cd express-fastify-github-oauth
 $ npm install
 ```
 
@@ -36,6 +36,26 @@ Server will start on [localhost:3000](http://localhost:3000)
 
 > Note: You can check the `access_token` working or not through this api > `https://api.github.com/user?access_token=<YOUR ACCESS TOKEN>`
 
+## Environment
+
+Include right `env` file when you running different environment.
+
+```js
+config = dotenv.config({
+    path: path.resolve(process.cwd(), '.env')
+}).parsed;
+
+if (isDev) {
+    config = Object.assign(config, dotenv.config({
+        path: path.resolve(process.cwd(), '.env.development')
+    }).parsed);
+} else {
+    config = Object.assign(config, dotenv.config({
+        path: path.resolve(process.cwd(), '.env.production')
+    }).parsed);
+}
+```
+
 ## License
 
-MIT © [Joydip Roy](https://github.com/rjoydip/github-oauth/LICENSE)
+MIT © [Joydip Roy](https://github.com/rjoydip/express-fastify-github-oauth/LICENSE)

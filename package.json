@@ -1,11 +1,12 @@
 {
-  "name": "github-oauth",
+  "name": "express-fastify-github-oauth",
   "version": "1.0.0",
-  "description": "A starter github-oauth using fastify",
+  "description": "A starter github oauth using fastify and express",
   "main": "index.js",
   "scripts": {
-    "start": "node index.js",
-    "dev": "npx nodemon index.js"
+    "start": "npm run prod",
+    "dev": "npx NODE_ENV=development nodemon index.js",
+    "prod": "npx NODE_ENV=production node index.js"
   },
   "keywords": [
     "express",
@@ -17,8 +18,8 @@
   "license": "ISC",
   "dependencies": {
     "dotenv": "^6.1.0",
+    "express": "^4.16.4",
     "fastify": "^1.12.1",
-    "fastify-env": "^0.6.1",
     "superagent": "^4.0.0-beta.5"
   },
   "devDependencies": {
