@@ -1,13 +1,19 @@
 "use strict";
 
+const fs = require("fs");
 const path = require("path");
 const fastify = require("fastify");
 const express = require("express");
 const request = require("superagent");
 const dotenv = require("dotenv");
+const yaml = require('js-yaml');
 const isDev = process.env.NODE_ENV !== "production";
 
+const gitScope = yaml.safeLoad(fs.readFileSync('./scope.yml', 'utf8'));
+
 let config = null;
+
+const getScope = () => Object.keys(gitScope).filter(i => gitScope[i]).join(',');
 
 config = dotenv.config({
     path: path.resolve(process.cwd(), '.env')
@@ -32,7 +38,6 @@ const app = isExpress ?
     });
 
 app.get("/github/callback", async (req, res) => {
-    console.log(req.query);
     const {
         err,
         body
@@ -60,7 +65,7 @@ app.get("/", async (req, res) => {
             <body>
                 <a href="https://github.com/login/oauth/authorize?client_id=${
                 process.env.GITHUB_CLIENT_ID
-                }&scope=repo" alt="signin with github">Signin with github</a>
+                }&scope=${getScope()}" alt="signin with github">Signin with github</a>
             </body>
         </html>
         `
