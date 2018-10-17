@@ -32,6 +32,7 @@ const app = isExpress ?
     });
 
 app.get("/github/callback", async (req, res) => {
+    console.log(req.query);
     const {
         err,
         body
