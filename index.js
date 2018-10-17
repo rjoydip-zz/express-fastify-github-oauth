@@ -23,8 +23,6 @@ if (isDev) {
     }).parsed);
 }
 
-console.log('config', config);
-
 const isExpress = process.env.PROJECT_TYPE === "express";
 
 const app = isExpress ?

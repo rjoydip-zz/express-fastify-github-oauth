@@ -5,8 +5,8 @@
   "main": "index.js",
   "scripts": {
     "start": "npm run prod",
-    "dev": "npx NODE_ENV=development nodemon index.js",
-    "prod": "npx NODE_ENV=production node index.js"
+    "dev": "npx cross-env NODE_ENV=development nodemon index.js",
+    "prod": "npx cross-env NODE_ENV=production node index.js"
   },
   "keywords": [
     "express",
@@ -23,6 +23,7 @@
     "superagent": "^4.0.0-beta.5"
   },
   "devDependencies": {
+    "cross-env": "^5.2.0",
     "nodemon": "^1.18.4",
     "npx": "^10.2.0"
   }
